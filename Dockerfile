@@ -1,9 +1,12 @@
-FROM eclipse-temurin:21-jdk
-
+# ---- Build stage ----
+FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
+COPY . .
+RUN ./mvnw -q -DskipTests package
 
-COPY target/pulsedesk-backend-0.0.1-SNAPSHOT.jar app.jar
-
+# ---- Run stage ----
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
