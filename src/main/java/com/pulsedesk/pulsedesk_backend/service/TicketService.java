@@ -1,8 +1,8 @@
 package com.pulsedesk.pulsedesk_backend.service;
 
+import com.pulsedesk.pulsedesk_backend.dto.TicketAnalysisResult;
 import com.pulsedesk.pulsedesk_backend.entity.Comment;
 import com.pulsedesk.pulsedesk_backend.entity.Ticket;
-import com.pulsedesk.pulsedesk_backend.repository.CommentRepository;
 import com.pulsedesk.pulsedesk_backend.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +11,25 @@ import java.util.List;
 
 @Service
 public class TicketService {
+
     private final TicketRepository ticketRepository;
 
     public TicketService(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
     }
 
-    public Ticket createTicket(String content, Comment comment) {
+    public Ticket createTicket(
+            TicketAnalysisResult analysis,
+            Comment comment
+    ) {
 
         Ticket ticket = new Ticket();
 
-        ticket.setTitle("User reported technical issue");
-        ticket.setCategory("BUG");
-        ticket.setPriority("HIGH");
-        ticket.setSummary(content);
+        ticket.setTitle(analysis.getTitle());
+        ticket.setCategory(analysis.getCategory());
+        ticket.setPriority(analysis.getPriority());
+        ticket.setSummary(analysis.getSummary());
+
         ticket.setCreatedAt(LocalDateTime.now());
 
         ticket.setComment(comment);

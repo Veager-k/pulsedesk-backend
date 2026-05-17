@@ -1,10 +1,12 @@
 package com.pulsedesk.pulsedesk_backend.service;
 
+import com.pulsedesk.pulsedesk_backend.dto.TicketAnalysisResult;
 import com.pulsedesk.pulsedesk_backend.entity.Comment;
 import com.pulsedesk.pulsedesk_backend.entity.Ticket;
 import com.pulsedesk.pulsedesk_backend.repository.CommentRepository;
 import com.pulsedesk.pulsedesk_backend.repository.TicketRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,15 +16,19 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final TicketService ticketService;
+    private final AIAnalysisService aiAnalysisService;
 
     public CommentService(
             CommentRepository commentRepository,
-            TicketService ticketService
+            TicketService ticketService,
+            AIAnalysisService aiAnalysisService
     ) {
         this.commentRepository = commentRepository;
         this.ticketService = ticketService;
+        this.aiAnalysisService = aiAnalysisService;
     }
 
+    @Transactional
     public Comment createComment(String content) {
 
         Comment comment = new Comment();
@@ -32,9 +38,18 @@ public class CommentService {
 
         Comment savedComment = commentRepository.save(comment);
 
-        Ticket savedTicket = ticketService.createTicket(content, savedComment);
+        TicketAnalysisResult analysis =
+                aiAnalysisService.analyzeComment(content);
 
-        savedComment.setTicket(savedTicket);
+        if (analysis.isShouldCreateTicket()) {
+
+            Ticket savedTicket = ticketService.createTicket(
+                    analysis,
+                    savedComment
+            );
+
+            savedComment.setTicket(savedTicket);
+        }
 
         return commentRepository.save(savedComment);
     }

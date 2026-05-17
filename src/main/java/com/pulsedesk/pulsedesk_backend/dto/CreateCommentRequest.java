@@ -1,14 +1,12 @@
 package com.pulsedesk.pulsedesk_backend.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class CreateCommentRequest {
 
+    @Getter
+    @Setter
     private String content;
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }
