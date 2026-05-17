@@ -26,12 +26,12 @@ Gemini returns JSON describing whether a ticket should be created, plus title, c
 Add your Gemini API key:
 gemini.api.key=YOUR_KEY
 
-## Start the app:
+Start the app:
 ```
 ./mvnw spring-boot:run
 ```
 
-## Open Swagger:
+Open Swagger:
 http://localhost:8080/swagger-ui.html
 
 ## Example Request
